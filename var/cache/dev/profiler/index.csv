@@ -1,6 +1,0 @@
-212ba9,127.0.0.1,GET,http://localhost/Symfony/web/app_dev.php/_fragment?_path=_format%3Dhtml%26_locale%3Den%26_controller%3DOCPlatformBundle%253AAdvert%253Amenu,1518601865,dab810,200
-dab810,::1,GET,http://localhost/Symfony/web/app_dev.php/platform/add,1518601865,,200
-3f8136,127.0.0.1,GET,http://localhost/Symfony/web/app_dev.php/_fragment?_path=_format%3Dhtml%26_locale%3Den%26_controller%3DOCPlatformBundle%253AAdvert%253Amenu,1518602173,5d1b3d,200
-5d1b3d,::1,GET,http://localhost/Symfony/web/app_dev.php/platform/add,1518602173,,200
-dddaaa,127.0.0.1,GET,http://localhost/Symfony/web/app_dev.php/_fragment?_path=_format%3Dhtml%26_locale%3Den%26_controller%3DOCPlatformBundle%253AAdvert%253Amenu,1518602174,9abbe7,200
-9abbe7,::1,GET,http://localhost/Symfony/web/app_dev.php/platform,1518602174,,200
