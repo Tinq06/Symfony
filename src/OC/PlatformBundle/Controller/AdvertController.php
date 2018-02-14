@@ -12,6 +12,11 @@ class AdvertController extends Controller
 {
   public function indexAction($page)
   {
+
+    // On a donc accès au conteneur :
+    $mailer = $this->get('mailer');
+    // On peut envoyer des e-mails, etc.
+
     // On ne sait pas combien de pages il y a
     // Mais on sait qu'une page doit être supérieure ou égale à 1
     if ($page < 1) {
@@ -21,10 +26,31 @@ class AdvertController extends Controller
     }
 
     // Ici, on récupérera la liste des annonces, puis on la passera au template
+    // Notre liste d'annonce en dur
+        $listAdverts = array(
+          array(
+            'title'   => 'Recherche développpeur Symfony',
+            'id'      => 1,
+            'author'  => 'Alexandre',
+            'content' => 'Nous recherchons un développeur Symfony débutant sur Lyon. Blabla…',
+            'date'    => new \Datetime()),
+          array(
+            'title'   => 'Mission de webmaster',
+            'id'      => 2,
+            'author'  => 'Hugo',
+            'content' => 'Nous recherchons un webmaster capable de maintenir notre site internet. Blabla…',
+            'date'    => new \Datetime()),
+          array(
+            'title'   => 'Offre de stage webdesigner',
+            'id'      => 3,
+            'author'  => 'Mathieu',
+            'content' => 'Nous proposons un poste pour webdesigner. Blabla…',
+            'date'    => new \Datetime())
+        );
 
-    // Mais pour l'instant, on ne fait qu'appeler le template
+            // Mais pour l'instant, on ne fait qu'appeler le template
     return $this->render('OCPlatformBundle:Advert:index.html.twig', array(
-      'listAdverts'=> array()
+      'listAdverts'=> $listAdverts
     ));
   }
 
@@ -45,6 +71,17 @@ class AdvertController extends Controller
 
   public function addAction(Request $request)
   {
+    // On récupère le service
+    $antispam = $this->container->get('oc_platform.antispam');
+
+    // Je pars du principe que $text contient le texte d'un message quelconque
+    $text = '.454545545..';
+    if ($antispam->isSpam($text)) {
+      throw new \Exception('Votre message a été détecté comme spam !');
+    }
+    // Ici le message n'est pas un spam
+
+
     // La gestion d'un formulaire est particulière, mais l'idée est la suivante :
 
     // Si la requête est en POST, c'est que le visiteur a soumis le formulaire
@@ -71,6 +108,7 @@ class AdvertController extends Controller
 
       return $this->redirectToRoute('oc_platform_view', array('id' => 5));
     }
+
     $advert = array(
     'title'   => 'Recherche développpeur Symfony',
     'id'      => $id,
@@ -99,7 +137,7 @@ class AdvertController extends Controller
     // on la récupérera depuis la BDD !
     $listAdverts = array(
       array('id' => 2, 'title' => 'Recherche développeur Symfony'),
-      array('id' => 5, 'title' => 'Mission de webmaster'),
+      array('id' => 5, 'title' => 'Mission de webmaster de fou'),
       array('id' => 9, 'title' => 'Offre de stage webdesigner')
     );
 

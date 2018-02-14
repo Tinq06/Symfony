@@ -10,3 +10,4 @@ parameters:
     mailer_user: null
     mailer_password: null
     secret: f1c14bfc6e88564e1edca72a84e5927bbd65df75
+    locale: fr

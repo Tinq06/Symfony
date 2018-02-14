@@ -16,6 +16,6 @@ if (!\class_exists(appProdDebugProjectContainer::class, false)) {
 
 return new \ContainerBnilaot\appProdDebugProjectContainer(array(
     'container.build_hash' => 'Bnilaot',
-    'container.build_id' => '6364d723',
-    'container.build_time' => 1517904529,
+    'container.build_id' => '342b6ade',
+    'container.build_time' => 1518596361,
 ));
