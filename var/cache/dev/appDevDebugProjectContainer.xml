@@ -20,6 +20,7 @@
       <parameter key="DebugBundle">Symfony\Bundle\DebugBundle\DebugBundle</parameter>
       <parameter key="WebProfilerBundle">Symfony\Bundle\WebProfilerBundle\WebProfilerBundle</parameter>
       <parameter key="SensioDistributionBundle">Sensio\Bundle\DistributionBundle\SensioDistributionBundle</parameter>
+      <parameter key="DoctrineFixturesBundle">Doctrine\Bundle\FixturesBundle\DoctrineFixturesBundle</parameter>
       <parameter key="SensioGeneratorBundle">Sensio\Bundle\GeneratorBundle\SensioGeneratorBundle</parameter>
       <parameter key="WebServerBundle">Symfony\Bundle\WebServerBundle\WebServerBundle</parameter>
     </parameter>
@@ -78,6 +79,11 @@
         <parameter key="parent">null</parameter>
         <parameter key="path">C:\wamp\www\Symfony\vendor\sensio\distribution-bundle</parameter>
         <parameter key="namespace">Sensio\Bundle\DistributionBundle</parameter>
+      </parameter>
+      <parameter key="DoctrineFixturesBundle" type="collection">
+        <parameter key="parent">null</parameter>
+        <parameter key="path">C:\wamp\www\Symfony\vendor\doctrine\doctrine-fixtures-bundle</parameter>
+        <parameter key="namespace">Doctrine\Bundle\FixturesBundle</parameter>
       </parameter>
       <parameter key="SensioGeneratorBundle" type="collection">
         <parameter key="parent">null</parameter>
@@ -448,6 +454,7 @@
       <parameter key="console.command.doctrine_bundle_doctrinebundle_command_proxy_updateschemadoctrinecommand">doctrine.schema_update_command</parameter>
       <parameter key="console.command.doctrine_bundle_doctrinebundle_command_proxy_validateschemacommand">doctrine.schema_validate_command</parameter>
       <parameter key="console.command.sensiolabs_security_command_securitycheckercommand">console.command.sensiolabs_security_command_securitycheckercommand</parameter>
+      <parameter key="console.command.doctrine_bundle_fixturesbundle_command_loaddatafixturesdoctrinecommand">doctrine.fixtures_load_command</parameter>
       <parameter key="console.command.symfony_bundle_webserverbundle_command_serverruncommand">web_server.command.server_run</parameter>
       <parameter key="console.command.symfony_bundle_webserverbundle_command_serverstartcommand">web_server.command.server_start</parameter>
       <parameter key="console.command.symfony_bundle_webserverbundle_command_serverstopcommand">web_server.command.server_stop</parameter>
@@ -494,6 +501,7 @@
       <parameter key="doctrine.query_sql_command">true</parameter>
       <parameter key="doctrine.schema_update_command">true</parameter>
       <parameter key="doctrine.schema_validate_command">true</parameter>
+      <parameter key="doctrine.fixtures_load_command">true</parameter>
       <parameter key="web_server.command.server_run">true</parameter>
       <parameter key="web_server.command.server_start">true</parameter>
       <parameter key="web_server.command.server_stop">true</parameter>
@@ -3510,6 +3518,11 @@
     <service id="framework_extra_bundle.argument_name_convertor" class="Sensio\Bundle\FrameworkExtraBundle\Request\ArgumentNameConverter" public="false">
       <argument type="service" id="argument_metadata_factory"/>
     </service>
+    <service id="oc_platform.antispam" class="OC\PlatformBundle\Antispam\OCAntispam">
+      <argument type="service" id="swiftmailer.mailer.default"/>
+      <argument>en</argument>
+      <argument>10</argument>
+    </service>
     <service id="twig.extension.dump" class="Symfony\Bridge\Twig\Extension\DumpExtension" public="false">
       <tag name="twig.extension"/>
       <argument type="service" id="var_dumper.cloner"/>
@@ -3608,6 +3621,12 @@
       <tag name="console.command"/>
       <argument type="service" id="sensio_distribution.security_checker"/>
     </service>
+    <service id="doctrine.fixtures_load_command" class="Doctrine\Bundle\FixturesBundle\Command\LoadDataFixturesDoctrineCommand">
+      <tag name="console.command" command="doctrine:fixtures:load"/>
+      <call method="setName">
+        <argument>doctrine:fixtures:load</argument>
+      </call>
+    </service>
     <service id="web_server.command.server_run" class="Symfony\Bundle\WebServerBundle\Command\ServerRunCommand" public="false">
       <tag name="console.command" command="server:run"/>
       <argument>C:\wamp\www\Symfony/public</argument>
@@ -3647,7 +3666,7 @@
       <argument type="collection"/>
     </service>
     <service id="console.command_loader" class="Symfony\Component\Console\CommandLoader\ContainerCommandLoader" public="true">
-      <argument type="service" id="service_locator.3wkzln9"/>
+      <argument type="service" id="service_locator.6yov_jw"/>
       <argument type="collection">
         <argument key="about">console.command.about</argument>
         <argument key="assets:install">console.command.assets_install</argument>
@@ -3688,6 +3707,7 @@
         <argument key="doctrine:query:sql">doctrine.query_sql_command</argument>
         <argument key="doctrine:schema:update">doctrine.schema_update_command</argument>
         <argument key="doctrine:schema:validate">doctrine.schema_validate_command</argument>
+        <argument key="doctrine:fixtures:load">doctrine.fixtures_load_command</argument>
         <argument key="server:run">web_server.command.server_run</argument>
         <argument key="server:start">web_server.command.server_start</argument>
         <argument key="server:stop">web_server.command.server_stop</argument>
@@ -3695,7 +3715,7 @@
         <argument key="server:log">web_server.command.server_log</argument>
       </argument>
     </service>
-    <service id="service_locator.3wkzln9" class="Symfony\Component\DependencyInjection\ServiceLocator" public="false">
+    <service id="service_locator.6yov_jw" class="Symfony\Component\DependencyInjection\ServiceLocator" public="false">
       <tag name="container.service_locator"/>
       <argument type="collection">
         <argument key="console.command.about" type="service" id="console.command.about"/>
@@ -3724,6 +3744,7 @@
         <argument key="doctrine.database_drop_command" type="service" id="doctrine.database_drop_command"/>
         <argument key="doctrine.database_import_command" type="service" id="doctrine.database_import_command"/>
         <argument key="doctrine.ensure_production_settings_command" type="service" id="doctrine.ensure_production_settings_command"/>
+        <argument key="doctrine.fixtures_load_command" type="service" id="doctrine.fixtures_load_command"/>
         <argument key="doctrine.generate_entities_command" type="service" id="doctrine.generate_entities_command"/>
         <argument key="doctrine.mapping_convert_command" type="service" id="doctrine.mapping_convert_command"/>
         <argument key="doctrine.mapping_import_command" type="service" id="doctrine.mapping_import_command"/>
