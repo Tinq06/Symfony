@@ -11,10 +11,53 @@
   <h2>{{ advert.title }}</h2>
   <i>Par {{ advert.author }}, le {{ advert.date|date('d/m/Y') }}</i>
 
+  {# On vérifie qu'une image soit bien associée à l'annonce #}
+  <div class="container-fluid">
+  <p style="text-align:center">
+  {% if advert.image is not null %}
+    <img style="text-align:center" src="{{ advert.image.url }}" alt="{{ advert.image.alt }}" class=" img-responsive img-thumbnail">
+  {% endif %}
+  </p>
+  </div>
+
   <div class="well">
     {{ advert.content }}
   </div>
+  {% if not advert.categories.empty %}
+    <p>
+      Cette annonce est parue dans les catégories suivantes :
+      {% for category in advert.categories %}
+        {{ category.name }}{% if not loop.last %}, {% endif %}
+      {% endfor %}
+    </p>
+  {% else %} <p>Pas de categories associé à cette annonce</p>
+  {% endif %}
 
+  {% if listAdvertSkills|length > 0 %}
+    <div>
+      Cette annonce requiert les compétences suivantes :
+      <ul>
+        {% for advertSkill in listAdvertSkills %}
+          <li>{{ advertSkill.skill.name }} : niveau {{ advertSkill.level }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% else %}<p>Aucune compétences requises</p>
+  {% endif %}
+
+  <h3>Liste des candidatures</h3>
+  <div class="panel-group">
+    {% for application in listApplications %}
+        <div class="panel panel-default">
+          <div class="panel-heading">{{ application.author }} le {{ application.date|date('d/m/Y') }}</div>
+          <div class="panel-body">{{ application.content }}</div>
+        </div>
+    {% else %}
+      <div class="panel panel-danger">
+        <div class="panel-heading">Pas (encore) de candidatures</div>
+      </div>
+    {% endfor %}
+  </div>
   <p>
     <a href="{{ path('oc_platform_home') }}" class="btn btn-default">
       <i class="glyphicon glyphicon-chevron-left"></i>
