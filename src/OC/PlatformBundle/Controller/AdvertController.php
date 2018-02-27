@@ -3,7 +3,7 @@
 // src/OC/PlatformBundle/Controller/AdvertController.php
 
 namespace OC\PlatformBundle\Controller;
-
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -15,29 +15,23 @@ use OC\PlatformBundle\Entity\AdvertSkill;
 
 class AdvertController extends Controller
 {
+
   public function indexAction($page)
   {
-
-    // On a donc accès au conteneur :
-    $mailer = $this->get('mailer');
-    // On peut envoyer des e-mails, etc.
-
-    // On ne sait pas combien de pages il y a
-    // Mais on sait qu'une page doit être supérieure ou égale à 1
     if ($page < 1) {
-      // On déclenche une exception NotFoundHttpException, cela va afficher
-      // une page d'erreur 404 (qu'on pourra personnaliser plus tard d'ailleurs)
       throw new NotFoundHttpException('Page "'.$page.'" inexistante.');
     }
 
-    // Ici, on récupérera la liste des annonces, puis on la passera au template
-    // Notre liste d'annonce en dur
-    $em = $this->getDoctrine()->getManager();
-    $listAdverts = $em->getRepository('OCPlatformBundle:Advert')->findAll();
+    // Pour récupérer la liste de toutes les annonces : on utilise findAll()
+    $listAdverts = $this->getDoctrine()
+      ->getManager()
+      ->getRepository('OCPlatformBundle:Advert')
+      ->getAdverts()
+    ;
 
-    // Mais pour l'instant, on ne fait qu'appeler le template
+    // L'appel de la vue ne change pas
     return $this->render('OCPlatformBundle:Advert:index.html.twig', array(
-      'listAdverts'=> $listAdverts
+      'listAdverts' => $listAdverts,
     ));
   }
 
@@ -45,21 +39,15 @@ class AdvertController extends Controller
     {
       $em = $this->getDoctrine()->getManager();
 
-      // On récupère l'annonce $id
       $advert = $em->getRepository('OCPlatformBundle:Advert')->find($id);
 
-      // $advert est donc une instance de OC\PlatformBundle\Entity\Advert
-      // ou null si l'id $id  n'existe pas, d'où ce if :
       if (null === $advert) {
         throw new NotFoundHttpException("L'annonce d'id ".$id." n'existe pas.");
       }
 
-      // On récupère la liste des candidatures de cette annonce
       $listApplications = $em->getRepository('OCPlatformBundle:Application')
         ->findBy(array('advert' => $advert));
 
-
-      // On récupère maintenant la liste des AdvertSkill
       $listAdvertSkills = $em->getRepository('OCPlatformBundle:AdvertSkill')
         ->findBy(array('advert' => $advert));
 
@@ -72,21 +60,19 @@ class AdvertController extends Controller
 
   public function addAction(Request $request)
   {
-    // On récupère le service
-    $antispam = $this->container->get('oc_platform.antispam');
+    /*$antispam = $this->container->get('oc_platform.antispam');
 
-    // Je pars du principe que $text contient le texte d'un message quelconque
     $text = '.454545545..';
     if ($antispam->isSpam($text)) {
       throw new \Exception('Votre message a été détecté comme spam !');
-    }
-    // Ici le message n'est pas un spam
+    }*/
 
     // Création de l'entité Advert
        $advert = new Advert();
        $advert->setTitle('Recherche développeur Symfony.');
        $advert->setAuthor('Alexandre');
        $advert->setContent("Nous recherchons un développeur Symfony débutant sur Lyon. Blabla…");
+       $advert->setMailAuthor("tinq06@gmail.com");
 
        // Création d'une première candidature
        $application1 = new Application();
@@ -143,6 +129,10 @@ class AdvertController extends Controller
        // Étape 2 : On « flush » tout ce qui a été persisté avant
        $em->flush();
 
+       $fakeemail = $this->container->get('oc_platform.service.fakeemail');
+       $message=$fakeemail->getFakeEmail();
+
+
     // La gestion d'un formulaire est particulière, mais l'idée est la suivante :
 
     // Si la requête est en POST, c'est que le visiteur a soumis le formulaire
@@ -156,7 +146,19 @@ class AdvertController extends Controller
     }
 
     // Si on n'est pas en POST, alors on affiche le formulaire
-    return $this->render('OCPlatformBundle:Advert:add.html.twig',array('advert'=>$advert));
+    return $this->render('OCPlatformBundle:Advert:add.html.twig',array('advert'=>$advert,'message'=>$message));
+  }
+
+  public function listAction()
+  {
+    $listAdverts = $this->getDoctrine()->getManager()->getRepository('OCPlatformBundle:Advert')
+      ->getAdvertWithApplications();
+
+    foreach ($listAdverts as $advert) {
+      // Ne déclenche pas de requête : les candidatures sont déjà chargées !
+      // Vous pourriez faire une boucle dessus pour les afficher toutes
+    $advert->getApplications();
+    }
   }
 
   public function editAction($id, Request $request)
@@ -170,86 +172,55 @@ class AdvertController extends Controller
     if (null === $advert) {
       throw new NotFoundHttpException("L'annonce d'id ".$id." n'existe pas.");
     }
+    //Gestion formulaire
 
-    // La méthode findAll retourne toutes les catégories de la base de données
-    $listCategories = $em->getRepository('OCPlatformBundle:Category')->findAll();
+    if ($request->isMethod('POST')) {
+         $request->getSession()->getFlashBag()->add('notice', 'Annonce bien modifiée.');
 
-    // On boucle sur les catégories pour les lier à l'annonce
-    foreach ($listCategories as $category) {
-      $advert->addCategory($category);
+         return $this->redirectToRoute('oc_platform_view', array('id' => $advert->getId()));
     }
 
-    // Pour persister le changement dans la relation, il faut persister l'entité propriétaire
-    // Ici, Advert est le propriétaire, donc inutile de la persister car on l'a récupérée depuis Doctrine
-
-    // Étape 2 : On déclenche l'enregistrement
-    $em->flush();
-
-    return $this->render('OCPlatformBundle:Advert:edit.html.twig', array(
-    'advert' => $advert
-    ));
+     return $this->render('OCPlatformBundle:Advert:edit.html.twig', array(
+       'advert' => $advert
+     ));
   }
 
   public function deleteAction($id)
   {
     $em = $this->getDoctrine()->getManager();
-
-    // On récupère l'annonce $id
     $advert = $em->getRepository('OCPlatformBundle:Advert')->find($id);
 
     if (null === $advert) {
       throw new NotFoundHttpException("L'annonce d'id ".$id." n'existe pas.");
     }
 
-    // On boucle sur les catégories de l'annonce pour les supprimer
     foreach ($advert->getCategories() as $category) {
       $advert->removeCategory($category);
     }
 
-    // Pour persister le changement dans la relation, il faut persister l'entité propriétaire
-    // Ici, Advert est le propriétaire, donc inutile de la persister car on l'a récupérée depuis Doctrine
-
-    // On déclenche la modification
     $em->flush();
 
     return $this->render('OCPlatformBundle:Advert:delete.html.twig');
   }
 
-  public function menuAction()
+  public function menuAction($limit = 1)
   {
-    // On fixe en dur une liste ici, bien entendu par la suite
-    // on la récupérera depuis la BDD !
-    $listAdverts = array(
-      array('id' => 2, 'title' => 'Recherche développeur Symfony'),
-      array('id' => 5, 'title' => 'Mission de webmaster de fou'),
-      array('id' => 9, 'title' => 'Offre de stage webdesigner')
-    );
+
+    // Ici, on récupérera la liste des annonces, puis on la passera au template
+    // Notre liste d'annonce en dur
+    $em = $this->getDoctrine()->getManager();
+    $listAdverts = $em->getRepository('OCPlatformBundle:Advert')->findBy(
+      array(),
+      array('date'=>'DESC'),
+      $limit,
+      0
+  );
 
     return $this->render('OCPlatformBundle:Advert:menu.html.twig', array(
       // Tout l'intérêt est ici : le contrôleur passe
       // les variables nécessaires au template !
       'listAdverts' => $listAdverts
     ));
-  }
-
-  public function editImageAction($advertId)
-  {
-    $em = $this->getDoctrine()->getManager();
-
-    // On récupère l'annonce
-    $advert = $em->getRepository('OCPlatformBundle:Advert')->find($advertId);
-
-    // On modifie l'URL de l'image par exemple
-    $advert->getImage()->setUrl('test.png');
-
-    // On n'a pas besoin de persister l'annonce ni l'image.
-    // Rappelez-vous, ces entités sont automatiquement persistées car
-    // on les a récupérées depuis Doctrine lui-même
-
-    // On déclenche la modification
-    $em->flush();
-
-    return new Response('OK');
   }
 
 }

@@ -17,6 +17,7 @@
       <parameter key="DoctrineBundle">Doctrine\Bundle\DoctrineBundle\DoctrineBundle</parameter>
       <parameter key="SensioFrameworkExtraBundle">Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle</parameter>
       <parameter key="OCPlatformBundle">OC\PlatformBundle\OCPlatformBundle</parameter>
+      <parameter key="StofDoctrineExtensionsBundle">Stof\DoctrineExtensionsBundle\StofDoctrineExtensionsBundle</parameter>
     </parameter>
     <parameter key="kernel.bundles_metadata" type="collection">
       <parameter key="FrameworkBundle" type="collection">
@@ -59,6 +60,11 @@
         <parameter key="path">C:\wamp\www\Symfony\src\OC\PlatformBundle</parameter>
         <parameter key="namespace">OC\PlatformBundle</parameter>
       </parameter>
+      <parameter key="StofDoctrineExtensionsBundle" type="collection">
+        <parameter key="parent">null</parameter>
+        <parameter key="path">C:\wamp\www\Symfony\vendor\stof\doctrine-extensions-bundle</parameter>
+        <parameter key="namespace">Stof\DoctrineExtensionsBundle</parameter>
+      </parameter>
     </parameter>
     <parameter key="kernel.charset">UTF-8</parameter>
     <parameter key="kernel.container_class">appProdDebugProjectContainer</parameter>
@@ -69,10 +75,10 @@
     <parameter key="database_name">symfony</parameter>
     <parameter key="database_user">root</parameter>
     <parameter key="database_password">finddoc</parameter>
-    <parameter key="mailer_transport">smtp</parameter>
-    <parameter key="mailer_host">127.0.0.1</parameter>
-    <parameter key="mailer_user">null</parameter>
-    <parameter key="mailer_password">null</parameter>
+    <parameter key="mailer_transport">gmail</parameter>
+    <parameter key="mailer_host">smtp.gmail.com</parameter>
+    <parameter key="mailer_user">tinq06@gmail.com</parameter>
+    <parameter key="mailer_password">g513wzma</parameter>
     <parameter key="secret">f1c14bfc6e88564e1edca72a84e5927bbd65df75</parameter>
     <parameter key="locale">en</parameter>
     <parameter key="fragment.renderer.hinclude.global_template">null</parameter>
@@ -155,12 +161,12 @@
     <parameter key="swiftmailer.email_sender.listener.class">Symfony\Bundle\SwiftmailerBundle\EventListener\EmailSenderListener</parameter>
     <parameter key="swiftmailer.data_collector.class">Symfony\Bundle\SwiftmailerBundle\DataCollector\MessageDataCollector</parameter>
     <parameter key="swiftmailer.mailer.default.transport.name">smtp</parameter>
-    <parameter key="swiftmailer.mailer.default.transport.smtp.encryption">null</parameter>
-    <parameter key="swiftmailer.mailer.default.transport.smtp.port">25</parameter>
-    <parameter key="swiftmailer.mailer.default.transport.smtp.host">127.0.0.1</parameter>
-    <parameter key="swiftmailer.mailer.default.transport.smtp.username">null</parameter>
-    <parameter key="swiftmailer.mailer.default.transport.smtp.password">null</parameter>
-    <parameter key="swiftmailer.mailer.default.transport.smtp.auth_mode">null</parameter>
+    <parameter key="swiftmailer.mailer.default.transport.smtp.encryption">ssl</parameter>
+    <parameter key="swiftmailer.mailer.default.transport.smtp.port">465</parameter>
+    <parameter key="swiftmailer.mailer.default.transport.smtp.host">smtp.gmail.com</parameter>
+    <parameter key="swiftmailer.mailer.default.transport.smtp.username">tinq06@gmail.com</parameter>
+    <parameter key="swiftmailer.mailer.default.transport.smtp.password">g513wzma</parameter>
+    <parameter key="swiftmailer.mailer.default.transport.smtp.auth_mode">login</parameter>
     <parameter key="swiftmailer.mailer.default.transport.smtp.timeout">30</parameter>
     <parameter key="swiftmailer.mailer.default.transport.smtp.source_ip">null</parameter>
     <parameter key="swiftmailer.mailer.default.transport.smtp.local_domain">null</parameter>
@@ -285,6 +291,20 @@
     <parameter key="doctrine.orm.auto_generate_proxy_classes">true</parameter>
     <parameter key="doctrine.orm.proxy_dir">C:\wamp\www\Symfony\var\cache\prod/doctrine/orm/Proxies</parameter>
     <parameter key="doctrine.orm.proxy_namespace">Proxies</parameter>
+    <parameter key="stof_doctrine_extensions.listener.sluggable.class">Gedmo\Sluggable\SluggableListener</parameter>
+    <parameter key="stof_doctrine_extensions.default_locale">en</parameter>
+    <parameter key="stof_doctrine_extensions.translation_fallback">false</parameter>
+    <parameter key="stof_doctrine_extensions.persist_default_translation">false</parameter>
+    <parameter key="stof_doctrine_extensions.skip_translation_on_load">false</parameter>
+    <parameter key="stof_doctrine_extensions.listener.translatable.class">Gedmo\Translatable\TranslatableListener</parameter>
+    <parameter key="stof_doctrine_extensions.listener.timestampable.class">Gedmo\Timestampable\TimestampableListener</parameter>
+    <parameter key="stof_doctrine_extensions.listener.blameable.class">Gedmo\Blameable\BlameableListener</parameter>
+    <parameter key="stof_doctrine_extensions.listener.tree.class">Gedmo\Tree\TreeListener</parameter>
+    <parameter key="stof_doctrine_extensions.listener.loggable.class">Gedmo\Loggable\LoggableListener</parameter>
+    <parameter key="stof_doctrine_extensions.listener.sortable.class">Gedmo\Sortable\SortableListener</parameter>
+    <parameter key="stof_doctrine_extensions.listener.softdeleteable.class">Gedmo\SoftDeleteable\SoftDeleteableListener</parameter>
+    <parameter key="stof_doctrine_extensions.listener.uploadable.class">Gedmo\Uploadable\UploadableListener</parameter>
+    <parameter key="stof_doctrine_extensions.listener.reference_integrity.class">Gedmo\ReferenceIntegrity\ReferenceIntegrityListener</parameter>
     <parameter key="console.command.ids" type="collection">
       <parameter key="console.command.symfony_bundle_frameworkbundle_command_aboutcommand">console.command.about</parameter>
       <parameter key="console.command.symfony_bundle_frameworkbundle_command_assetsinstallcommand">console.command.assets_install</parameter>
@@ -2133,7 +2153,7 @@
       <argument type="service" id="debug.event_dispatcher" on-invalid="null"/>
       <argument type="service" id="security.authentication.trust_resolver"/>
       <call method="setLogoutOnUserChange">
-        <argument>false</argument>
+        <argument>true</argument>
       </call>
     </service>
     <service id="security.authentication.listener.anonymous.main" class="Symfony\Component\Security\Http\Firewall\AnonymousAuthenticationListener" public="false">
@@ -2653,13 +2673,13 @@
         <argument type="service" id="3_Swift_Transport_Esmtp_Auth_PlainAuthenticator~bsqqdlt"/>
       </argument>
       <call method="setUsername">
-        <argument>null</argument>
+        <argument>tinq06@gmail.com</argument>
       </call>
       <call method="setPassword">
-        <argument>null</argument>
+        <argument>g513wzma</argument>
       </call>
       <call method="setAuthMode">
-        <argument>null</argument>
+        <argument>login</argument>
       </call>
     </service>
     <service id="swiftmailer.mailer.default.transport.buffer" class="Swift_Transport_StreamBuffer" public="false">
@@ -2676,13 +2696,13 @@
       </argument>
       <argument type="service" id="swiftmailer.mailer.default.transport.eventdispatcher"/>
       <call method="setHost">
-        <argument>127.0.0.1</argument>
+        <argument>smtp.gmail.com</argument>
       </call>
       <call method="setPort">
-        <argument>25</argument>
+        <argument>465</argument>
       </call>
       <call method="setEncryption">
-        <argument>null</argument>
+        <argument>ssl</argument>
       </call>
       <call method="setTimeout">
         <argument>30</argument>
@@ -2815,11 +2835,20 @@
     </service>
     <service id="doctrine.dbal.default_connection.event_manager" class="Symfony\Bridge\Doctrine\ContainerAwareEventManager" public="false">
       <argument type="service" id="service_container"/>
+      <call method="addEventSubscriber">
+        <argument type="service" id="stof_doctrine_extensions.listener.sluggable"/>
+      </call>
       <call method="addEventListener">
         <argument type="collection">
           <argument>loadClassMetadata</argument>
         </argument>
         <argument type="service" id="doctrine.orm.default_listeners.attach_entity_listeners"/>
+      </call>
+      <call method="addEventListener">
+        <argument type="collection">
+          <argument>postPersist</argument>
+        </argument>
+        <argument type="service" id="oc_platform.doctrine_listener.application_creation"/>
       </call>
     </service>
     <service id="doctrine.dbal.default_connection" class="Doctrine\DBAL\Connection" public="true">
@@ -3157,6 +3186,19 @@
       <argument type="service" id="swiftmailer.mailer.default"/>
       <argument>en</argument>
       <argument>10</argument>
+    </service>
+    <service id="oc_platform.email.application_mailer" class="OC\PlatformBundle\Email\ApplicationMailer">
+      <argument type="service" id="swiftmailer.mailer.default"/>
+    </service>
+    <service id="oc_platform.doctrine_listener.application_creation" class="OC\PlatformBundle\DoctrineListener\ApplicationCreationListener">
+      <tag name="doctrine.event_listener" event="postPersist"/>
+      <argument type="service" id="oc_platform.email.application_mailer"/>
+    </service>
+    <service id="stof_doctrine_extensions.listener.sluggable" class="Gedmo\Sluggable\SluggableListener" public="false">
+      <tag name="doctrine.event_subscriber" connection="default"/>
+      <call method="setAnnotationReader">
+        <argument type="service" id="annotations.cached_reader"/>
+      </call>
     </service>
     <service id="service_locator.sr6ctxe" class="Symfony\Component\DependencyInjection\ServiceLocator" public="false">
       <tag name="container.service_locator"/>

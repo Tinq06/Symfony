@@ -1,0 +1,25 @@
+{# src/OC/PlatformBundle/Resources/views/Advert/music.html.twig #}
+
+{% extends "OCPlatformBundle::layout.html.twig" %}
+
+{% block title %}
+  Une petite musique - {{ parent() }}
+{% endblock %}
+
+{% block ocplatform_body %}
+
+  <h2>Une petite musique</h2>
+  <p>
+    C'est dur de rester concentré en PI toute la journée... C'est pour cela que tu peux écouter cette douce musique !
+  </p>
+  <p align="center">
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/4y33h81phKU" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+  </p>
+  <p>
+    <a href="{{ path('oc_platform_home') }}" class="btn btn-default">
+      <i class="glyphicon glyphicon-chevron-left"></i>
+      Retour à l'accueil
+    </a>
+  </p>
+
+{% endblock %}

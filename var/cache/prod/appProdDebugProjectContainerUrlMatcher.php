@@ -56,6 +56,16 @@ class appProdDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBun
                 return $this->mergeDefaults(array_replace($matches, array('_route' => 'oc_platform_delete')), array (  '_controller' => 'OC\\PlatformBundle\\Controller\\AdvertController::deleteAction',));
             }
 
+            // oc_platform_background
+            if (0 === strpos($pathinfo, '/platform/background') && preg_match('#^/platform/background(?:/(?P<id>\\d*))?$#s', $pathinfo, $matches)) {
+                return $this->mergeDefaults(array_replace($matches, array('_route' => 'oc_platform_background')), array (  '_controller' => 'OC\\PlatformBundle\\Controller\\ExtraController::backgroundAction',  'id' => 0,));
+            }
+
+            // oc_platform_music
+            if ('/platform/music' === $pathinfo) {
+                return array (  '_controller' => 'OC\\PlatformBundle\\Controller\\ExtraController::musicAction',  '_route' => 'oc_platform_music',);
+            }
+
         }
 
         throw 0 < count($allow) ? new MethodNotAllowedException(array_unique($allow)) : new ResourceNotFoundException();

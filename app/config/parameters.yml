@@ -6,7 +6,7 @@ parameters:
     database_user: root
     database_password: finddoc
     mailer_transport: smtp
-    mailer_host: 127.0.0.1
-    mailer_user: null
-    mailer_password: null
+    mailer_host: smtp.gmail.com
+    mailer_user: tinq06@gmail.com
+    mailer_password: g513wzma
     secret: f1c14bfc6e88564e1edca72a84e5927bbd65df75
