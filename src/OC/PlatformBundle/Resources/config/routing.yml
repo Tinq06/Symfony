@@ -29,3 +29,28 @@ oc_platform_delete:
         _controller: OCPlatformBundle:Advert:delete
     requirements:
         id: \d+
+
+#oc_platform_background:
+#    path:      /background/{id}
+#    defaults:
+#        _controller: OCPlatformBundle:Advert:background
+#        id: 0
+#    requirements:
+#        id: \d*
+#
+#oc_platform_music:
+  #  path:      /music
+  #  defaults:
+  #      _controller: OCPlatformBundle:Advert:music
+oc_platform_background:
+    path:      /background/{id}
+    defaults:
+        _controller: OCPlatformBundle:Extra:background
+        id: 0
+    requirements:
+        id: \d*
+
+oc_platform_music:
+    path:      /music
+    defaults:
+        _controller: OCPlatformBundle:Extra:music

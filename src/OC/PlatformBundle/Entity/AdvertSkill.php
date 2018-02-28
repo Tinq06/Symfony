@@ -84,7 +84,7 @@ class AdvertSkill
     public function setAdvert(\OC\PlatformBundle\Entity\Advert $advert = null)
     {
         $this->advert = $advert;
-    
+
         return $this;
     }
 
@@ -108,7 +108,7 @@ class AdvertSkill
     public function setSkill(\OC\PlatformBundle\Entity\Skill $skill = null)
     {
         $this->skill = $skill;
-    
+
         return $this;
     }
 

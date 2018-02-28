@@ -1,0 +1,35 @@
+
+{% extends "OCPlatformBundle::layout.html.twig" %}
+
+{% block title %}
+  Modifier le background - {{ parent() }}
+{% endblock %}
+
+{% block ocplatform_body %}
+
+  <h2>Modifier le background</h2>
+  <p>
+    Plus qu'a afficher les differents fonds dispos !
+
+    <a href="{{ path('oc_platform_background',{'id':1}) }}" class="btn btn-default">
+      Fond 1
+    </a>
+    <a href="{{ path('oc_platform_background',{'id':2}) }}" class="btn btn-default">
+      Fond 2
+    </a>
+    <a href="{{ path('oc_platform_background',{'id':3}) }}" class="btn btn-default">
+      Fond 3
+    </a>
+    <a href="{{ path('oc_platform_background',{'id':4}) }}" class="btn btn-default">
+      Fond 4
+    </a>
+  </p>
+
+  <p>
+    <a href="{{ path('oc_platform_home') }}" class="btn btn-default">
+      <i class="glyphicon glyphicon-chevron-left"></i>
+      Retour à l'accueil
+    </a>
+  </p>
+
+{% endblock %}

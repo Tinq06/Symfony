@@ -1,0 +1,11 @@
+{% if app.session.get('backgroundId') is defined %}
+      {% if app.session.get('backgroundId')==1 %}
+        style="background-color:#ffdede;"
+      {% elseif app.session.get('backgroundId')==2 %}
+      style="background-color:azure;"
+      {% elseif app.session.get('backgroundId')==3 %}
+      style="background-image: url({{ asset('public/images/fond/fond3.jpg') }});background-repeat: no-repeat;background-size: cover;background-position: center;"
+      {% elseif app.session.get('backgroundId')==4 %}
+      style="background-image: url({{ asset('public/images/fond/fond4.jpg') }});background-repeat: no-repeat;background-size: cover;background-position: center;"
+      {% endif %}
+{% endif %}
