@@ -12,6 +12,15 @@ use OC\PlatformBundle\Entity\Image;
 use OC\PlatformBundle\Entity\Application;
 use OC\PlatformBundle\Entity\Skill;
 use OC\PlatformBundle\Entity\AdvertSkill;
+use OC\PlatformBundle\Form\AdvertType;
+use OC\PlatformBundle\Form\AdvertEditType;
+
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 class AdvertController extends Controller
 {
@@ -22,16 +31,28 @@ class AdvertController extends Controller
       throw new NotFoundHttpException('Page "'.$page.'" inexistante.');
     }
 
+    $nbPerPage=3;
     // Pour récupérer la liste de toutes les annonces : on utilise findAll()
     $listAdverts = $this->getDoctrine()
       ->getManager()
       ->getRepository('OCPlatformBundle:Advert')
-      ->getAdverts()
+      ->getAdverts($page,$nbPerPage)
     ;
+
+
+    // On calcule le nombre total de pages grâce au count($listAdverts) qui retourne le nombre total d'annonces
+    $nbPages = ceil(count($listAdverts) / $nbPerPage);
+
+    // Si la page n'existe pas, on retourne une 404
+    if ($page > $nbPages) {
+      throw $this->createNotFoundException("La page ".$page." n'existe pas.");
+    }
 
     // L'appel de la vue ne change pas
     return $this->render('OCPlatformBundle:Advert:index.html.twig', array(
       'listAdverts' => $listAdverts,
+      'nbPages'=>$nbPages,
+      'page'=>$page,
     ));
   }
 
@@ -60,93 +81,38 @@ class AdvertController extends Controller
 
   public function addAction(Request $request)
   {
-    /*$antispam = $this->container->get('oc_platform.antispam');
+    $advert = new Advert();
+    $advert->setTitle("Exemple de titre de l'annonce");
+    // J'ai raccourci cette partie, car c'est plus rapide à écrire !
+    $form = $this->createForm(AdvertType::class, $advert);
 
-    $text = '.454545545..';
-    if ($antispam->isSpam($text)) {
-      throw new \Exception('Votre message a été détecté comme spam !');
-    }*/
-
-    // Création de l'entité Advert
-       $advert = new Advert();
-       $advert->setTitle('Recherche développeur Symfony.');
-       $advert->setAuthor('Alexandre');
-       $advert->setContent("Nous recherchons un développeur Symfony débutant sur Lyon. Blabla…");
-       $advert->setMailAuthor("tinq06@gmail.com");
-
-       // Création d'une première candidature
-       $application1 = new Application();
-       $application1->setAuthor('Marine');
-       $application1->setContent("J'ai toutes les qualités requises.");
-
-       // Création d'une deuxième candidature par exemple
-       $application2 = new Application();
-       $application2->setAuthor('Pierre');
-       $application2->setContent("Je suis très motivé.");
-
-       // Création de l'entité Image
-       $image = new Image();
-       $image->setUrl('https://www.w3schools.com/w3css/img_fjords.jpg');
-       $image->setAlt('Job nul');
-
-       // On lie les candidatures à l'annonce
-       $application1->setAdvert($advert);
-       $application2->setAdvert($advert);
-
-       $advert->setImage($image);
-
-       // On récupère l'EntityManager
-       $em = $this->getDoctrine()->getManager();
-
-       // On récupère toutes les compétences possibles
-       $listSkills = $em->getRepository('OCPlatformBundle:Skill')->findAll();
-
-        // Pour chaque compétence
-        foreach ($listSkills as $skill) {
-          // On crée une nouvelle « relation entre 1 annonce et 1 compétence »
-          $advertSkill = new AdvertSkill();
-
-          // On la lie à l'annonce, qui est ici toujours la même
-          $advertSkill->setAdvert($advert);
-          // On la lie à la compétence, qui change ici dans la boucle foreach
-          $advertSkill->setSkill($skill);
-
-          // Arbitrairement, on dit que chaque compétence est requise au niveau 'Expert'
-          $advertSkill->setLevel('Expert');
-
-          // Et bien sûr, on persiste cette entité de relation, propriétaire des deux autres relations
-          $em->persist($advertSkill);
-        }
-
-       // Étape 1 : On « persiste » l'entité
-       $em->persist($advert);
-
-       // Étape 1 ter : pour cette relation pas de cascade lorsqu'on persiste Advert, car la relation est
-       // définie dans l'entité Application et non Advert. On doit donc tout persister à la main ici.
-       $em->persist($application1);
-       $em->persist($application2);
-
-       // Étape 2 : On « flush » tout ce qui a été persisté avant
-       $em->flush();
-
-       $fakeemail = $this->container->get('oc_platform.service.fakeemail');
-       $message=$fakeemail->getFakeEmail();
-
-
-    // La gestion d'un formulaire est particulière, mais l'idée est la suivante :
-
-    // Si la requête est en POST, c'est que le visiteur a soumis le formulaire
+    // Si la requête est en POST
     if ($request->isMethod('POST')) {
-      // Ici, on s'occupera de la création et de la gestion du formulaire
+      // On fait le lien Requête <-> Formulaire
+      // À partir de maintenant, la variable $advert contient les valeurs entrées dans le formulaire par le visiteur
+      $form->handleRequest($request);
 
-      $request->getSession()->getFlashBag()->add('notice', 'Annonce bien enregistrée.');
+      // On vérifie que les valeurs entrées sont correctes
+      // (Nous verrons la validation des objets en détail dans le prochain chapitre)
+      if ($form->isValid()) {
+        // On enregistre notre objet $advert dans la base de données, par exemple
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($advert);
+        $em->flush();
 
-      // Puis on redirige vers la page de visualisation de cettte annonce
-      return $this->redirectToRoute('oc_platform_view', array('id' => $advert->getId()));
+        $request->getSession()->getFlashBag()->add('notice', 'Annonce bien enregistrée.');
+
+        // On redirige vers la page de visualisation de l'annonce nouvellement créée
+        return $this->redirectToRoute('oc_platform_view', array('id' => $advert->getId()));
+      }
     }
 
-    // Si on n'est pas en POST, alors on affiche le formulaire
-    return $this->render('OCPlatformBundle:Advert:add.html.twig',array('advert'=>$advert,'message'=>$message));
+    // À ce stade, le formulaire n'est pas valide car :
+    // - Soit la requête est de type GET, donc le visiteur vient d'arriver sur la page et veut voir le formulaire
+    // - Soit la requête est de type POST, mais le formulaire contient des valeurs invalides, donc on l'affiche de nouveau
+    return $this->render('OCPlatformBundle:Advert:add.html.twig', array(
+      'form' => $form->createView(),
+    ));
   }
 
   public function listAction()
@@ -173,34 +139,62 @@ class AdvertController extends Controller
       throw new NotFoundHttpException("L'annonce d'id ".$id." n'existe pas.");
     }
     //Gestion formulaire
+    $form = $this->createForm(AdvertEditType::class, $advert);
 
+    // Si la requête est en POST
     if ($request->isMethod('POST')) {
-         $request->getSession()->getFlashBag()->add('notice', 'Annonce bien modifiée.');
+      // On fait le lien Requête <-> Formulaire
+      // À partir de maintenant, la variable $advert contient les valeurs entrées dans le formulaire par le visiteur
+      $form->handleRequest($request);
 
-         return $this->redirectToRoute('oc_platform_view', array('id' => $advert->getId()));
+        // On vérifie que les valeurs entrées sont correctes
+        // (Nous verrons la validation des objets en détail dans le prochain chapitre)
+        if ($form->isValid()) {
+          // On enregistre notre objet $advert dans la base de données, par exemple
+          $em = $this->getDoctrine()->getManager();
+          $em->persist($advert);
+          $em->flush();
+
+          $request->getSession()->getFlashBag()->add('notice', 'Annonce bien modifié.');
+
+          // On redirige vers la page de visualisation de l'annonce nouvellement créée
+          return $this->redirectToRoute('oc_platform_view', array('id' => $advert->getId()));
+        }
+
     }
-
-     return $this->render('OCPlatformBundle:Advert:edit.html.twig', array(
-       'advert' => $advert
-     ));
+    return $this->render('OCPlatformBundle:Advert:edit.html.twig', array(
+      'form' => $form->createView(),
+      'advert' => $advert
+      ));
   }
 
-  public function deleteAction($id)
+  public function deleteAction(Request $request,$id)
   {
     $em = $this->getDoctrine()->getManager();
+
     $advert = $em->getRepository('OCPlatformBundle:Advert')->find($id);
 
     if (null === $advert) {
       throw new NotFoundHttpException("L'annonce d'id ".$id." n'existe pas.");
     }
 
-    foreach ($advert->getCategories() as $category) {
-      $advert->removeCategory($category);
+    // On crée un formulaire vide, qui ne contiendra que le champ CSRF
+    // Cela permet de protéger la suppression d'annonce contre cette faille
+    $form = $this->get('form.factory')->create();
+
+    if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
+      $em->remove($advert);
+      $em->flush();
+
+      $request->getSession()->getFlashBag()->add('info', "L'annonce a bien été supprimée.");
+
+      return $this->redirectToRoute('oc_platform_home');
     }
 
-    $em->flush();
-
-    return $this->render('OCPlatformBundle:Advert:delete.html.twig');
+    return $this->render('OCPlatformBundle:Advert:delete.html.twig', array(
+      'advert' => $advert,
+      'form'   => $form->createView(),
+    ));
   }
 
   public function menuAction($limit = 1)
