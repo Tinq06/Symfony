@@ -15,7 +15,9 @@
   <div class="container-fluid">
   <p style="text-align:center">
   {% if advert.image is not null %}
-    <img style="text-align:center" src="{{ advert.image.url }}" alt="{{ advert.image.alt }}" class=" img-responsive img-thumbnail">
+    <img style="text-align:center" src="{{ asset(advert.image.webPath) }}"
+
+  alt="{{ advert.image.alt }}" class=" img-responsive img-thumbnail">
   {% endif %}
   </p>
   </div>

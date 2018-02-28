@@ -24,6 +24,12 @@ class Advert
     private $id;
 
     /**
+      * @ORM\OneToMany(targetEntity="OC\PlatformBundle\Entity\AdvertSkill", mappedBy="advert")
+      * @ORM\JoinColumn(nullable=true)
+     */
+    private $advertskills;
+
+    /**
      * @ORM\Column(name="nb_applications", type="integer")
      */
     private $nbApplications = 0;
@@ -80,7 +86,7 @@ class Advert
     /**
      * @var string
      *
-     * @ORM\Column(name="mail_author", type="string", length=255)
+     * @ORM\Column(name="mail_author", type="string", length=255,nullable=true)
      */
     private $mailAuthor;
 
@@ -437,5 +443,39 @@ class Advert
     public function getSlug()
     {
         return $this->slug;
+    }
+
+    /**
+     * Add advertskill
+     *
+     * @param \OC\PlatformBundle\Entity\AdvertSkill $advertskill
+     *
+     * @return Advert
+     */
+    public function addAdvertskill(\OC\PlatformBundle\Entity\AdvertSkill $advertskill)
+    {
+        $this->advertskills[] = $advertskill;
+
+        return $this;
+    }
+
+    /**
+     * Remove advertskill
+     *
+     * @param \OC\PlatformBundle\Entity\AdvertSkill $advertskill
+     */
+    public function removeAdvertskill(\OC\PlatformBundle\Entity\AdvertSkill $advertskill)
+    {
+        $this->advertskills->removeElement($advertskill);
+    }
+
+    /**
+     * Get advertskills
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getAdvertskills()
+    {
+        return $this->advertskills;
     }
 }

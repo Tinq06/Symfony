@@ -28,6 +28,11 @@ class Skill
      */
     private $name;
 
+    /**
+      * @ORM\OneToMany(targetEntity="OC\PlatformBundle\Entity\AdvertSkill", mappedBy="skill")
+      * @ORM\JoinColumn(nullable=true)
+     */
+    private $advertskills;
 
     /**
      * Get id
@@ -49,7 +54,7 @@ class Skill
     public function setName($name)
     {
         $this->name = $name;
-    
+
         return $this;
     }
 
@@ -61,5 +66,46 @@ class Skill
     public function getName()
     {
         return $this->name;
+    }
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->advertskills = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Add advertskill
+     *
+     * @param \OC\PlatformBundle\Entity\AdvertSkill $advertskill
+     *
+     * @return Skill
+     */
+    public function addAdvertskill(\OC\PlatformBundle\Entity\AdvertSkill $advertskill)
+    {
+        $this->advertskills[] = $advertskill;
+    
+        return $this;
+    }
+
+    /**
+     * Remove advertskill
+     *
+     * @param \OC\PlatformBundle\Entity\AdvertSkill $advertskill
+     */
+    public function removeAdvertskill(\OC\PlatformBundle\Entity\AdvertSkill $advertskill)
+    {
+        $this->advertskills->removeElement($advertskill);
+    }
+
+    /**
+     * Get advertskills
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getAdvertskills()
+    {
+        return $this->advertskills;
     }
 }
