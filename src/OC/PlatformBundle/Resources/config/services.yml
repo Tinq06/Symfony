@@ -24,3 +24,4 @@ services:
 
     oc_platform.service.fakeemail:
         class: OC\PlatformBundle\Service\FakeEmail
+        

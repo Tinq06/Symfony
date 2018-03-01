@@ -39,9 +39,15 @@ class AdvertController extends Controller
       ->getAdverts($page,$nbPerPage)
     ;
 
+    $count_listAdverts=count($listAdverts);
+    if($count_listAdverts==0){
+      $nbPages = 1;
+    }
+    else{
+      // On calcule le nombre total de pages grâce au count($listAdverts) qui retourne le nombre total d'annonces
+      $nbPages = ceil($count_listAdverts / $nbPerPage);
+    }
 
-    // On calcule le nombre total de pages grâce au count($listAdverts) qui retourne le nombre total d'annonces
-    $nbPages = ceil(count($listAdverts) / $nbPerPage);
 
     // Si la page n'existe pas, on retourne une 404
     if ($page > $nbPages) {

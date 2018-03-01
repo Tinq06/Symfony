@@ -36,12 +36,25 @@
     </div>
   </div>
 
-  {{ form_row(form.author) }}
+  <div class="form-group">
+    {{ form_label(form.author, "Author", {'label_attr': {'class': 'col-sm-1 control-label'}}) }}
+    {{ form_errors(form.author) }}
+    <div class="col-sm-11">
+      {{ form_widget(form.author, {'attr': {'class': 'form-control'}}) }}
+    </div>
+  </div>
+
   {% if form.published is defined %}
   {{ form_row(form.published) }}
   {% endif %}
   {% if form.image is defined %}
-  {{ form_row(form.image)}}
+  <div class="form-group">
+    {{ form_label(form.image, "Image", {'label_attr': {'class': 'col-sm-1 control-label'}}) }}
+    {{ form_errors(form.image) }}
+    <div class="col-sm-11">
+      {{ form_widget(form.image) }}
+    </div>
+  </div>
   {% endif %}
 
   {{ form_row(form.categories)}}
