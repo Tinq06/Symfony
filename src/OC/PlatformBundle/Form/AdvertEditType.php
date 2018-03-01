@@ -16,7 +16,7 @@ class AdvertEditType extends AbstractType
 
           ->remove('date')
 
-          ->remove('image')
+          //->remove('image')
 
         ;
     }
